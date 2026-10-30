@@ -1,0 +1,22 @@
+[Unit]
+Description=Optimus Boot Selector
+DefaultDependencies=no
+After=local-fs.target systemd-vconsole-setup.service
+Before=optimus-boot.service getty@tty1.service display-manager.service graphical.target
+
+[Service]
+Type=oneshot
+ExecStartPre=-/usr/bin/chvt 8
+ExecStart=/usr/bin/optimus_boot_select_profile
+ExecStopPost=-/usr/bin/chvt 1
+StandardInput=tty-force
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty8
+TTYReset=yes
+TTYVHangup=yes
+RemainAfterExit=yes
+TimeoutStartSec=0
+
+[Install]
+WantedBy=graphical.target

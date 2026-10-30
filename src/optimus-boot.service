@@ -1,0 +1,18 @@
+[Unit]
+Description=Optimus Boot
+DefaultDependencies=no
+After=optimus-boot-select_profile.service
+Wants=optimus-boot-select_profile.service
+Before=getty@tty1.service display-manager.service graphical.target shutdown.target
+Conflicts=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/optimus-boot
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=120
+
+[Install]
+WantedBy=graphical.target

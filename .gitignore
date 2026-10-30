@@ -1,0 +1,6 @@
+/build
+/.cache
+/src/.cache
+/src/build
+/pkg
+/release
