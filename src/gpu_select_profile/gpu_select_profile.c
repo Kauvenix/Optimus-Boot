@@ -121,7 +121,10 @@ static int write_profile(const char *profile) {
 
 static void run_menu(void) {
   int idle = 0;
+  render();
   while (!got_stop_signal) {
+    if (idle > 0 && idle % 25 == 0)
+      render();
     int c = read_key();
     if (c == 0) {
       if (++idle >= IDLE_TIMEOUT_LOOPS) {

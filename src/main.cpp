@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (!std::ifstream(Config::CONFIG_FILE)) {
+  if (!Config::is_valid_config_file()) {
     Config::default_setup();
     if (!std::ifstream(Config::CONFIG_FILE)) {
       std::cerr << "CONFIG_FILE no exist " << Config::CONFIG_FILE << std::endl;

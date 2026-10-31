@@ -30,10 +30,8 @@ Optimus Boot requires envycontrol to be installed globally because it runs as a 
 Requires pipx to be installed
 
 ```bash
-git clone https://github.com/bayasdev/envycontrol.git
-cd envycontrol
-pipx install .
-sudo ln -s ~/.local/bin/envycontrol /usr/local/bin/envycontrol
+sudo pipx install --global git+https://github.com/bayasdev/envycontrol.git
+ln -s /usr/local/bin/envycontrol ~/.local/bin/envycontrol
 ```
 
 ### Install OptimusBoot
@@ -59,7 +57,7 @@ sudo systemctl daemon-reload
 
 ## Notes
 - Changing the profile always triggers a reboot.
-- Tested on: EndeavourOS Titan Nova.
+- Tested on: EndeavourOS Titan Nova and Solus Linux.
 
 ## Contributing & Support
 
@@ -67,7 +65,7 @@ Found a bug or have a suggestion? [Open an issue](https://github.com/Kauvenix/Op
 Please include your distro, GPU, and the output of:
 
 ```bash
-journalctl -b -u optimus-boot.service optimus-boot-select_profile.service
+journalctl -b -u optimus-boot.service -u optimus-boot-select_profile.service
 ```
 
 Pull requests are welcome.

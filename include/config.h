@@ -18,4 +18,6 @@ std::map<std::string, std::string> get_config();
 bool update_config(const std::map<std::string, std::string> &config);
 
 void default_setup();
+
+bool is_valid_config_file();
 } // namespace Config

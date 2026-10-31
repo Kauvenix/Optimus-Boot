@@ -49,10 +49,15 @@ bool update_config(const std::map<std::string, std::string> &config) {
   return true;
 }
 
-void default_setup() {
-  std::string path;
-  Command::start_process("which", {"envycontrol"}, path);
-  save(backed_names[0], path);
-}
+void default_setup() { save(backed_names[0], "/usr/local/bin/envycontrol"); }
 
+bool is_valid_config_file() {
+  if (!std::ifstream(Config::CONFIG_FILE))
+    return false;
+
+  auto file = Config::get_config();
+  if (file["backend_path"] == "" || file["backend"] == "")
+    return false;
+  return true;
+}
 } // namespace Config
