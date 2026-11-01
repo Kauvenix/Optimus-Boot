@@ -1,8 +1,9 @@
 #include <iostream>
-#include <parameter_utils.h>
 
 #include "command.h"
-#include <backend/envycontrol.h>
+#include "envycontrol_utils.h"
+#include <backend.h>
+#include <parameter_utils.h>
 #include <profile_manager.h>
 
 using std::string;
@@ -37,10 +38,8 @@ int run() {
     return 0;
   }
 
-  Envycontrol backend;
-
   std::cout << "Reading current GPU profile...\n";
-  string current_profile = backend.get_current_profile();
+  string current_profile = envycontrol_get_current_profile();
   std::cout << "Current GPU profile: " << current_profile << '\n';
 
   if (current_profile == parameter_value) {
@@ -48,7 +47,7 @@ int run() {
     return 0;
   }
   std::cout << "Applying GPU profile: " << parameter_value << '\n';
-  if (backend.set_profile(parameter_value) != 0) {
+  if (Backend::set_profile(parameter_value) != 0) {
     std::cerr << "Failed to update GPU profile.\n";
     return 1;
   }

@@ -1,3 +1,4 @@
+#include <envycontrol_utils.h>
 #include <fcntl.h>
 #include <linux/vt.h>
 #include <signal.h>

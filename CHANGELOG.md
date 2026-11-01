@@ -2,7 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
-## [1.1] - 2026-10-30
+## [v1.1.1] - 2026-10-31
+
+### Changed
+- The current GPU profile is now detected natively in C (a replica of EnvyControl v3.5.2's `get_current_mode()`) instead of running `envycontrol --query`. The same code is shared by the main program and the boot menu (`optimus_boot_select_profile`).
+- Removed the class-based backend design (the `Envycontrol` class and its virtual methods) in favor of plain functions, resulting in simpler code, fewer abstractions and less overhead.
+- Both executables (`optimus-boot` and `optimus_boot_select_profile`) are now built by CMake, which also handles installing the binaries and the systemd units. `install.sh` was simplified accordingly.
+- Enabled `-Wall -Wextra` compiler warnings.
+
+## [v1.1.0] - 2026-10-30
 
 ### Fixed
 - Boot menu not displaying on systems that use Plymouth (boot splash animation). The TUI did not load correctly over the splash screen.
@@ -14,6 +22,6 @@ All notable changes to this project are documented in this file.
 - README: EnvyControl is now installed system-wide with `sudo pipx install --global`, so it is available at boot. This improves compatibility with distros other than Arch.
 - Tested on Solus Linux, in addition to EndeavourOS.
 
-## [1.0]
+## [v1.0.0]
 
 - Initial release.
