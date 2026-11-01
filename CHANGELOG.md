@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [v1.1.2] - 2026-11-01
+
+### Fixed
+- Installation script missing `sudo cmake --install release`, which prevented automatic installation of binaries and systemd units. The install process now properly installs all components after building.
+
+
 ## [v1.1.1] - 2026-10-31
 
 ### Changed
