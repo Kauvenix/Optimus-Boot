@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [v1.1.3] - 2026-11-05
+
+### Fixed
+- Critical backend error causing program execution failure. The `set_profile()` function now correctly uses `Config::get_config()["backend_path"]` instead of the native profile detection, fixing a regression that caused the binary path to be resolved incorrectly at startup.
+
+
 ## [v1.1.2] - 2026-11-01
 
 ### Fixed

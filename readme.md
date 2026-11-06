@@ -55,6 +55,21 @@ sudo rm "/usr/lib/systemd/system/optimus-boot-select_profile.service"
 sudo systemctl daemon-reload
 ```
 
+## Configuration
+
+Optimus Boot reads its settings from `/etc/optimus-boot.conf`. It is a plain text file with one `key=value` per line:
+
+```ini
+backend=envycontrol
+backend_path=/usr/local/bin/envycontrol
+```
+
+- `backend`: the tool used to switch GPU profiles. Currently only `envycontrol` is supported.
+- `backend_path`: full path to the backend executable.
+
+If the file is missing or either key is empty, it is considered invalid and the defaults shown above are used.
+
+
 ## Notes
 - Changing the profile always triggers a reboot.
 - Tested on: EndeavourOS Titan Nova and Solus Linux.
