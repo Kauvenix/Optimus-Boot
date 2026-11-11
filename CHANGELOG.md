@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## [v1.2.0-alpha.1] - 2026-11-10
+
+### Added
+- Config file skeleton (/etc/optimus-boot/optimus-boot.conf)
+- Dynamic ASCII box rendering with countdown timer
+- Show current profile in the menu
+### Changed
+- CONFIG_FILE moved to /etc/optimus-boot/
+
 ## [v1.1.3] - 2026-11-05
 
 ### Fixed

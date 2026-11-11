@@ -11,7 +11,8 @@ enum BackendIndex {
 };
 inline const std::array<std::string, 1> backed_names = {"envycontrol"};
 
-inline constexpr const char *CONFIG_FILE = "/etc/optimus-boot.conf";
+inline constexpr const char *CONFIG_FILE =
+    "/etc/optimus-boot/optimus-boot.conf";
 
 int set_backend(std::string name);
 std::map<std::string, std::string> get_config();

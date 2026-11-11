@@ -1,4 +1,3 @@
-#include <envycontrol_utils.h>
 #include <fcntl.h>
 #include <linux/vt.h>
 #include <signal.h>
@@ -7,18 +6,24 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <envycontrol_utils.h>
+
 #define OUT_FILE "/run/optimus-boot.txt"
 #define KERNEL_LOGLEVEL_FILE "/proc/sys/kernel/printk"
-#define IDLE_TIMEOUT_LOOPS 100 // 1 loop = 100ms
+#define IDLE_TIMEOUT_LOOPS_MAX 100 // 1 loop = 100ms
 
 static const char *options[] = {"Current", "Integrated", "Hybrid", "Nvidia"};
-static const int option_count = sizeof(options) / sizeof(options[0]);
+#define OPTION_COUNT ((int)(sizeof(options) / sizeof(options[0])))
 
 static int select_index = 0;
 static struct termios original;
 static char kernel_log_backup[64];
 static int redirect_fd = -1;
 static volatile sig_atomic_t got_stop_signal = 0;
+
+static int idle_timeout_loops = IDLE_TIMEOUT_LOOPS_MAX;
+
+const char *current_profile;
 
 static void on_stop_signal(int sig) {
   (void)sig;
@@ -93,17 +98,39 @@ static void restore_terminal_state(void) {
   virtual_terminal_switch(1);
 }
 
+#define LINE_MAX_LEN 40
+#define HEADER_LINES 2
+#define FOOTER_LINES 2
+#define TOTAL_LINES (HEADER_LINES + FOOTER_LINES + OPTION_COUNT)
+#define LAST_BOX_LINE (TOTAL_LINES - 1)
+static void create_box_render(char box[][LINE_MAX_LEN]) {
+  snprintf(box[0], LINE_MAX_LEN, "Current profile %s", current_profile);
+  snprintf(box[1], LINE_MAX_LEN, "Select profile:");
+
+  char prefix;
+  for (int i = 0; i < OPTION_COUNT; i++) {
+    prefix = (i == select_index) ? '>' : ' ';
+    snprintf(box[i + HEADER_LINES], LINE_MAX_LEN, "%c%s", prefix, options[i]);
+  }
+
+  int timeout_in_seconds = idle_timeout_loops / 10;
+  snprintf(box[LAST_BOX_LINE], LINE_MAX_LEN, "Keeping current profile in %ds",
+           timeout_in_seconds);
+}
 static void render(void) {
   printf("\033[H\033[J");
-  printf("┌──────────────────┐\n│ Use Up / Down    │\n│   Select:        │\n");
-  for (int i = 0; i < option_count; i++)
-    printf(select_index == i ? "│  > %-13s │\n" : "│    %-13s │\n", options[i]);
-  printf("└──────────────────┘\n");
+  char box[TOTAL_LINES][LINE_MAX_LEN];
+  create_box_render(box);
+  int loops_max = sizeof(box) / sizeof(box[0]);
+
+  for (int i = 0; i < loops_max; i++) {
+    printf(box[i], '\n');
+  }
   fflush(stdout);
 }
 
 static void move(int delta) {
-  select_index = (select_index + delta + option_count) % option_count;
+  select_index = (select_index + delta + OPTION_COUNT) % OPTION_COUNT;
   render();
 }
 
@@ -121,20 +148,19 @@ static int write_profile(const char *profile) {
 }
 
 static void run_menu(void) {
-  int idle = 0;
   render();
   while (!got_stop_signal) {
-    if (idle > 0 && idle % 25 == 0)
+    if (idle_timeout_loops > 0 && idle_timeout_loops % 25 == 0)
       render();
     int c = read_key();
     if (c == 0) {
-      if (++idle >= IDLE_TIMEOUT_LOOPS) {
+      if (--idle_timeout_loops <= 0) {
         select_index = 0;
         break;
       }
       continue;
     }
-    idle = 0;
+    idle_timeout_loops = IDLE_TIMEOUT_LOOPS_MAX;
 
     if (c != '\033') {
       if (c == '\n' || c == '\r')
@@ -166,6 +192,8 @@ int main(void) {
   virtual_terminal_switch(8);
   redirect_systemd_messages_to_tty1();
   silence_kernel_messages();
+
+  current_profile = envycontrol_get_current_profile();
 
   printf("\033[?25l");
   render();
